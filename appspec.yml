@@ -1,18 +1,19 @@
-version: 0.0
 os: linux
 files:
-  - source: /index.html
-    destination: /var/www/html/
+   - source: https://s3-us-west-2.amazonaws.com/qa-jenkins-release/bm-api-prod.war
+     destination: /usr/share/tomcat7/webapps/app.war
+permissions:
+   - object: /usr/share/tomcat7/webapps/app.war
+     pattern: "**"
+     owner: tomcat
+     group: tomcat
+     mode: 755
+     type:
+       - file
 hooks:
   BeforeInstall:
-    - location: scripts/install_dependencies
-      timeout: 300
+    - location: codeDeployScripts/stopTomcat.sh
       runas: root
-    - location: scripts/start_server
-      timeout: 300
+   AfterInstall:
+    - location: codeDeployScripts/startTomcat.sh
       runas: root
-  ApplicationStop:
-    - location: scripts/stop_server
-      timeout: 300
-      runas: root
-
